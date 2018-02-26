@@ -2,11 +2,14 @@ package org.bugbot;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class BugBot extends TelegramLongPollingBot {
+
+    Cfg cahe = new Cfg("config.cfg");
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -18,35 +21,34 @@ public class BugBot extends TelegramLongPollingBot {
         }
     }
 
-    public String getBotUsername() {
-        return "BugHelper";
-    }
 
     public void onUpdateReceived(Update e) {
 
     }
 
-    public String getBotToken() {
 
-        return "nononon";
+
+    public void sendMessage(long chat, String text, int reply){
+        SendMessage sm = new SendMessage();
+        sm.setChatId(chat);
+        sm.setText(text);
+        try {
+            if(reply!=0)
+                sm.setReplyToMessageId(reply);
+        }catch (Exception e){}
+        try {
+            sendMessage(sm);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
     }
 
-
-//    private void reWriteCache(String text) {
-//        try(FileWriter writer = new FileWriter(botTelegram.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "cache.cfg", false)){
-//            writer.write(text + '\n');
-//            writer.flush();
-//        }catch(IOException ex){System.out.println(ex.getMessage());}
-//    }
-//    private String readCahe() {
-//        try(FileReader reader = new FileReader(botTelegram.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "cache.cfg")){
-//            int c;
-//            StringBuilder cache = new StringBuilder();
-//            while((c=reader.read())!=-1){
-//                cache.append((char)c);
-//            }
-//            return cache.toString();
-//        }catch(IOException ex){return "";}
+    public String getBotUsername() {
+        return "BugHelper";
+    }
+    public String getBotToken() {
+        return "nononon";
+    }
 }
 
 
