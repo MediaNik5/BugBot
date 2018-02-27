@@ -21,12 +21,12 @@ public class faq implements Cmd {
 
     @Override
     public void execute(Update e, BugBot b) {
-        b.sendMessage(e.getMessage().getChatId(), "Create your frimeware: command /addfrime [name] in pm. Get your token.\n\n" +
+        b.sendMessage(e.getMessage().getChatId(), "Create your frimeware: command '/addrom [name]' in pm. Get your token.\n" +
                 "Go to your group and leave /install. Send to bot that token, That's it!", 0);
     }
 
     @Override
-    public Boolean hasRights(int user, long chat) {
+    public Boolean hasRights(int user, long chat, BugBot b) {
         return true;
     }
 }

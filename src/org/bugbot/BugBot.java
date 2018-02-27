@@ -1,10 +1,12 @@
 package org.bugbot;
 
-import org.bugbot.cmds.wrapper;
+import org.bugbot.cmds.*;
 import org.bugbot.config.Config;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.ChatMember;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -18,6 +20,11 @@ public class BugBot extends TelegramLongPollingBot {
     public Config cahe = new Config();
 
     public static void main(String[] args) {
+        wrapper.cmds.put("/faq", new faq());
+        wrapper.cmds.put("/addrom", new addrom());
+        wrapper.cmds.put("/install", new install());
+        wrapper.cmds.put("/addbug", new addbug());
+        wrapper.cmds.put("/bugs", new bugs());
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
         try {
@@ -28,10 +35,15 @@ public class BugBot extends TelegramLongPollingBot {
     }
 
 
+    /**
+     *
+     * @param name Enter a name of ROM u want to add
+     * @return The token of created ROM
+     */
     public String addRom(String name){
 
-        String tkn = name+generateNewToken();
-        List<String> l = cahe.getStringList("tkn");
+        String tkn = name+"."+generateNewToken();
+        List<String> l = cahe.getStringList("tkn")==null?new ArrayList<>():cahe.getStringList("tkn");
         while(l.contains(tkn)){
             tkn = name+generateNewToken();
         }
@@ -50,10 +62,10 @@ public class BugBot extends TelegramLongPollingBot {
         return false;
     }
 
-
     private double generateNewToken() {
         return (Math.random()*1000000);
     }
+
     public void sendMessage(long chat, String text, int reply){
         SendMessage sm = new SendMessage();
         sm.setChatId(chat);
@@ -68,14 +80,26 @@ public class BugBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
+
     public void onUpdateReceived(Update e) {
         wrapper.proceed(e, this);
     }
+
     public String getBotUsername() {
         return settings.name; // Create ur class settings.java and add 'public static final String name'
     }
     public String getBotToken() {
         return settings.token; // Create ur class settings.java and add 'public static final String token'
+    }
+
+    public List<ChatMember> getAdmins(long chatId) {
+        List<ChatMember> adm = new ArrayList<>();
+        try {
+            GetChatAdministrators ad = new GetChatAdministrators();
+            ad.setChatId(chatId);
+            adm = getChatAdministrators(ad);
+        } catch (TelegramApiException e1) {e1.printStackTrace();}
+        return adm;
     }
 }
 

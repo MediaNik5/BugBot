@@ -29,6 +29,8 @@ public class Config {
                 e.printStackTrace();
             }
         }
+        load();
+
     }
     @Nullable
     public String getString(String key){
@@ -56,12 +58,14 @@ public class Config {
                     continue;
                 }
                 if(q.startsWith("}")){
-                    setStringList(keyOfString, l);
+                    setStringList(keyOfString.substring(0, keyOfString.length()-1), l);
                     keyOfString = "";
                     continue;
                 }
-                if(!keyOfString.equals("")) l.add(revert(q).substring(2));
-                else setString(revert(q).split(":")[0], revert(q).split(":")[1]);
+                try {
+                    if (!keyOfString.equals("")) l.add(revert(q.replace("\t", "")));
+                    else setString(revert(q).split(":")[0], revert(q).split(":")[1]);
+                }catch (Throwable e){}
             }
         }catch(IOException ex){}
     }
@@ -88,13 +92,11 @@ public class Config {
     public String optimize(String s){
         s = s.replaceAll("\n", "nnnreplacennn");
         s = s.replaceAll(":", "colonreplacecolon");
-        s = s.replaceAll("\t", "tabreplacetab");
         return s;
     }
     public String revert(String s){
         s = s.replaceAll("nnnreplacennn", "\n");
         s = s.replaceAll("colonreplacecolon", ":");
-        s = s.replaceAll("tabreplacetab", "\t");
         return s;
     }
     public void setStringList(String key, List<String> l){
@@ -107,6 +109,11 @@ public class Config {
         if(lists.keySet().contains(key))
             lists.remove(key);
         strings.put(key, s);
+        save();
+    }
+    public void removeString(String key){
+        if(strings.keySet().contains(key))
+            strings.remove(key);
         save();
     }
 }

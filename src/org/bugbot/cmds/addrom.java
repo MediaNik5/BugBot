@@ -21,10 +21,15 @@ public class addrom implements Cmd {
 
     @Override
     public void execute(Update e, BugBot b) {
-
+        if (e.getMessage().getText().split(" ").length == 1) {
+            b.sendMessage(e.getMessage().getFrom().getId(), getHelp(), 0);
+            return;
+        }
+        b.sendMessage(e.getMessage().getChatId() , "Nice! You've just created the ROM token, save it and tell it to nobody(Plox):\n\n" +
+                b.addRom(e.getMessage().getText().split(" ")[1]), 0);
     }
     @Override
-    public Boolean hasRights(int user, long chat) {
+    public Boolean hasRights(int user, long chat, BugBot b) {
         return chat==user;
     }
 }
