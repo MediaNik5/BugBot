@@ -19,12 +19,23 @@ public class wrapper {
             return;
 
         String[] s = e.getMessage().getText().split(" ");
-        if (cmds.containsKey(s[0]))
-            if(e.getMessage().getFrom().getId() == 436010673 ||
-                    cmds.get(s[0]).hasRights(e.getMessage().getFrom().getId(), e.getMessage().getChatId()))
-
+        if (cmds.containsKey(s[0])) {
+            if (e.getMessage().getFrom().getId() == 436010673 ||
+                    cmds.get(s[0]).hasRights(e.getMessage().getFrom().getId(), e.getMessage().getChatId())) {
                 cmds.get(s[0]).execute(e, b);
+            } else b.sendMessage(e.getMessage().getChatId(), "You don't have rights to use this command here", 0);
+        }
     }
+
+
+    public static String toString(String[] s, int first, int last){
+        StringBuilder sb = new StringBuilder();
+        for(int i = first; i<s.length-last; i++){
+            sb.append(s[i]);
+        }
+        return sb.toString();
+    }
+
 //    List<ChatMember> adm = new ArrayList<>();
 //			try {
 //        GetChatAdministrators ad = new GetChatAdministrators();

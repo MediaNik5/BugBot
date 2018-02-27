@@ -3,30 +3,28 @@ package org.bugbot.cmds;
 import org.bugbot.BugBot;
 import org.telegram.telegrambots.api.objects.Update;
 
-public class faq implements Cmd {
+public class addrom implements Cmd {
     @Override
     public String getName() {
-        return "/faq";
+        return "/addrom";
     }
 
     @Override
     public String getDescription() {
-        return "FAQ of all what happening here";
+        return "Creates a token for your rom";
     }
 
     @Override
     public String getHelp() {
-        return "Usage: /faq";
+        return "Usage: send in pm '/addrom [rom_name]' and get the token.";
     }
 
     @Override
     public void execute(Update e, BugBot b) {
-        b.sendMessage(e.getMessage().getChatId(), "Create your frimeware: command /addfrime [name] in pm. Get your token.\n\n" +
-                "Go to your group and leave /install. Send to bot that token, That's it!", 0);
-    }
 
+    }
     @Override
     public Boolean hasRights(int user, long chat) {
-        return true;
+        return chat==user;
     }
 }

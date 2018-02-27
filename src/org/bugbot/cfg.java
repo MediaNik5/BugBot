@@ -7,12 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
+@Deprecated
 public class Cfg{
 
     File fle;
-    HashMap<String, String> cahe = new HashMap<String, String>();
-    Cfg(String name){
+    HashMap<String, String> cahe = new HashMap();
+    @Deprecated
+    public Cfg(String name){
         fle = new File(BugBot.class.getProtectionDomain().getCodeSource().getLocation().getPath() + name);
         if(!fle.exists()){
             try {
@@ -23,14 +26,52 @@ public class Cfg{
         }
         write("");
     }
-
+    @Deprecated
     public void write(String tag, String text){
         cahe.put(tag, text);
         save();
     }
+    @Deprecated
     public String get(String key){
         load();
         return cahe.get(key);
+    }
+    @Deprecated
+    public HashMap<String, List<String>> updateFromRoms(){
+        load();
+        HashMap<String, List<String>> hm = new HashMap<>();
+
+        return hm;
+    }
+    @Deprecated
+    public HashMap<String, HashMap<String, List<String>>> updateFromGrps(){
+        load();
+        HashMap<String, HashMap<String, List<String>>> hm = new HashMap<>();
+        return hm;
+    }
+    @Deprecated
+    public void update(HashMap<String, List<String>> roms, HashMap<String, HashMap<String, List<String>>> grps){
+        load();
+        for(String key : roms.keySet()){
+            List<String> l = roms.get(key);
+            cahe.put("tkn."+key, "");
+
+            for(String s : l){
+                cahe.put(key+"."+s, "");
+                cahe.put(s+"."+key, "");
+            }
+        }
+        int i=0;
+        for(String key : grps.keySet()){
+            HashMap<String, List<String>> hm = grps.get(key);
+            for(String k : hm.keySet()){
+                for(String s : hm.get(k)){
+                    cahe.put(k+"."+hm.get("tkn").get(0)+"."+i, s);
+                    i++;
+                }
+            }
+        }
+        save();
     }
     private void load() {
         try(FileReader reader = new FileReader(fle.getAbsoluteFile())){
@@ -58,6 +99,11 @@ public class Cfg{
         }catch(IOException ex){
             System.out.println(ex.getMessage());
         }
+    }
+    public String optimize(String s){
+        s = s.replaceAll("\n", "nnnreplacennn");
+        s = s.replaceAll(":", "colonreplacecolon");
+        return s;
     }
     @Deprecated
     public void write(@NotNull String text) {
