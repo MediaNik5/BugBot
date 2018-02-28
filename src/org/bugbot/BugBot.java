@@ -5,7 +5,6 @@ import org.bugbot.config.Config;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators;
-import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.ChatMember;
 import org.telegram.telegrambots.api.objects.Update;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class BugBot extends TelegramLongPollingBot {
 
-    public Config cahe = new Config();
+    public Config cahe = new Config("config.cfg");
 
     public static void main(String[] args) {
         wrapper.cmds.put("/faq", new faq());

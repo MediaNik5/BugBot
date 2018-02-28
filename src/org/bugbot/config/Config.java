@@ -19,8 +19,8 @@ public class Config {
     HashMap<String, String> strings = new HashMap<>();
     HashMap<String, List<String>> lists = new HashMap<>();
 
-    public Config(){
-        fle = new File(BugBot.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "config.cfg");
+    public Config(String name){
+        fle = new File(BugBot.class.getProtectionDomain().getCodeSource().getLocation().getPath() + name);
 
         if(!fle.exists()){
             try {
