@@ -28,6 +28,7 @@ public class BugBot extends TelegramLongPollingBot {
         wrapper.cmds.put("/clean", new clean());
         wrapper.cmds.put("/delbug", new delbug());
         wrapper.cmds.put("/ann", new ann());
+        wrapper.cmds.put("/anns", new anns());
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
         try {
@@ -87,6 +88,7 @@ public class BugBot extends TelegramLongPollingBot {
         if(!e.hasMessage())return;
         if(e.getMessage().getText().startsWith("#")){
             onAnn(e);
+            return;
         }
         wrapper.proceed(e, this);
     }
