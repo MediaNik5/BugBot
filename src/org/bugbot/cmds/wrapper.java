@@ -2,12 +2,9 @@ package org.bugbot.cmds;
 
 import org.bugbot.BugBot;
 import org.jetbrains.annotations.NotNull;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class wrapper {
 
@@ -16,8 +13,6 @@ public class wrapper {
     public static HashMap<String, Cmd> cmds = new HashMap<String, Cmd>();
 
     public static void proceed(@NotNull Update e, BugBot b){
-        if(!e.hasMessage())
-            return;
         String[] s = new String[1];
         try {
             s = e.getMessage().getText().split(" ");

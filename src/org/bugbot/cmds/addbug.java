@@ -31,12 +31,12 @@ public class addbug implements Cmd {
             b.sendMessage(e.getMessage().getChatId(), getHelp(), 0);
             return;
         }
-        List<String> l = b.cahe.getStringList("bugs."+b.cahe.getString(e.getMessage().getChatId()+"")) == null ?
-                new ArrayList<>() : b.cahe.getStringList("bugs."+b.cahe.getString(e.getMessage().getChatId()+""));
+        List<String> l = b.cahe.getStringList("bugs."+b.cahe.getString(e.getMessage().getChatId()+""));
+        if(l==null)l = new ArrayList<>();
 
         l.add(wrapper.toString(st, 1, 0, " "));
         b.cahe.setStringList("bugs."+b.cahe.getString(e.getMessage().getChatId()+""), l);
-        b.sendMessage(e.getMessage().getChatId(),"Bug is likely succesfully added", 0);
+        b.sendMessage(e.getMessage().getChatId(),"Bug is likely successfully added", 0);
     }
 
     @Override

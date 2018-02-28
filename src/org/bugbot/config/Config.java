@@ -64,7 +64,7 @@ public class Config {
                 }
                 try {
                     if (!keyOfString.equals("")) l.add(revert(q.replace("\t", "")));
-                    else setString(revert(q).split(":")[0], revert(q).split(":")[1]);
+                    else setString(revert(q.split(":")[0]), revert(q.split(":")[1]));
                 }catch (Throwable e){}
             }
         }catch(IOException ex){}

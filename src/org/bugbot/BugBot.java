@@ -5,6 +5,7 @@ import org.bugbot.config.Config;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators;
+import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.ChatMember;
 import org.telegram.telegrambots.api.objects.Update;
@@ -12,7 +13,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class BugBot extends TelegramLongPollingBot {
@@ -25,6 +25,9 @@ public class BugBot extends TelegramLongPollingBot {
         wrapper.cmds.put("/install", new install());
         wrapper.cmds.put("/addbug", new addbug());
         wrapper.cmds.put("/bugs", new bugs());
+        wrapper.cmds.put("/clean", new clean());
+        wrapper.cmds.put("/delbug", new delbug());
+        wrapper.cmds.put("/ann", new ann());
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
         try {
@@ -65,7 +68,6 @@ public class BugBot extends TelegramLongPollingBot {
     private double generateNewToken() {
         return (Math.random()*1000000);
     }
-
     public void sendMessage(long chat, String text, int reply){
         SendMessage sm = new SendMessage();
         sm.setChatId(chat);
@@ -82,7 +84,27 @@ public class BugBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update e) {
+        if(!e.hasMessage())return;
+        if(e.getMessage().getText().startsWith("#")){
+            onAnn(e);
+        }
         wrapper.proceed(e, this);
+    }
+
+    private void onAnn(Update e) {
+        String name = null;
+        try{
+            name = e.getMessage().getText().split(" ")[0];
+        }catch (Throwable ex){
+            name = e.getMessage().getText();
+        }
+        String a;
+        if((a=cahe.getString(name+"."+cahe.getString(e.getMessage().getChatId()+"")))!=null){
+            String aq [] = a.split(":");
+            int reply = Integer.parseInt(aq[aq.length-1]);
+            a = wrapper.toString(aq, 0, 1, " ");
+            sendMessage(e.getMessage().getChatId(), a, reply);
+        }
     }
 
     public String getBotUsername() {
