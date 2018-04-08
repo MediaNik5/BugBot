@@ -2,6 +2,7 @@ package org.bugbot;
 
 import org.bugbot.cmds.*;
 import org.bugbot.config.Config;
+import org.bugbot.config.settings;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators;
@@ -28,6 +29,8 @@ public class BugBot extends TelegramLongPollingBot {
         wrapper.cmds.put("/delbug", new delbug());
         wrapper.cmds.put("/ann", new ann());
         wrapper.cmds.put("/anns", new anns());
+        wrapper.cmds.put("/help", new help());
+        wrapper.cmds.put("/change", new change());
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
         try {
@@ -84,27 +87,41 @@ public class BugBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update e) {
+        cahe.load();
+        if(e.hasInlineQuery()){
+            wrapper.proceedQuery(e, this);
+            cahe.save();
+            return;
+        }
+        if(e.hasChannelPost()){
+            wrapper.proceedChannel(e, this);
+            cahe.save();
+            return;
+        }
         if(!e.hasMessage())return;
         if(e.getMessage().getText().startsWith("#")){
-            onAnn(e);
+            String name = null;
+            try{
+                name = e.getMessage().getText().split(" ")[0].toLowerCase();
+            }catch (Throwable ex){
+                name = e.getMessage().getText().toLowerCase();
+            }
+            onAnn(name, e.getMessage().getChatId());
+            cahe.save();
             return;
         }
         wrapper.proceed(e, this);
+        cahe.save();
     }
 
-    private void onAnn(Update e) {
-        String name = null;
-        try{
-            name = e.getMessage().getText().split(" ")[0];
-        }catch (Throwable ex){
-            name = e.getMessage().getText();
-        }
+    public void onAnn(String name, long chat) {
         String a;
-        if((a=cahe.getString(name+"."+cahe.getString(e.getMessage().getChatId()+"")))!=null){
+        if((a=cahe.getString(name+"."+cahe.getString(chat+"")))!=null){
             String aq [] = a.split(":");
             int reply = Integer.parseInt(aq[aq.length-1]);
-            a = wrapper.toString(aq, 0, 1, " ");
-            sendMessage(e.getMessage().getChatId(), a, reply);
+            a = wrapper.toString(aq, 0, 1, ":");
+            a = a.substring(0, a.length()-1);
+            sendMessage(chat, a, reply);
         }
     }
 

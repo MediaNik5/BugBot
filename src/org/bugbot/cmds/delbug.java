@@ -30,6 +30,7 @@ public class delbug implements Cmd {
 
         try{
             l.remove(Integer.parseInt(e.getMessage().getText().split(" ")[1])-1);
+            b.cahe.setStringList("bugs."+b.cahe.getString(e.getMessage().getChatId()+""), l);
             b.sendMessage(e.getMessage().getChatId(), "The bug is likely was removed", 0);
         }catch (Throwable ex){
             b.sendMessage(e.getMessage().getChatId(), "Something went wrong, check the number or existing of the bug.", 0);

@@ -34,14 +34,12 @@ public class Config {
     }
     @Nullable
     public String getString(String key){
-        load();
         return strings.get(key);
     }
     public List<String> getStringList(String key){
-        load();
         return lists.get(key);
     }
-    private void load() {
+    public void load() {
         try(FileReader reader = new FileReader(fle.getAbsoluteFile())){
             int c;
             StringBuilder cache = new StringBuilder();
@@ -69,7 +67,7 @@ public class Config {
             }
         }catch(IOException ex){}
     }
-    private void save(){
+    public void save(){
         StringBuilder sb = new StringBuilder();
 
         for(String key : strings.keySet()){
@@ -103,13 +101,11 @@ public class Config {
         if(strings.keySet().contains(key))
             strings.remove(key);
         lists.put(key, l);
-        save();
     }
     public void setString(String key, String s){
         if(lists.keySet().contains(key))
             lists.remove(key);
         strings.put(key, s);
-        save();
     }
     public void removeString(String key){
         if(strings.keySet().contains(key))
