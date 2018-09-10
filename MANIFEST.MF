@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: .
+Main-Class: org.bugbot.BugBot
+Archiver-Version: Plexus Archiver
+Created-By: 25.151-b12 (Oracle Corporation)
+

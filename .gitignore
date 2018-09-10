@@ -25,4 +25,6 @@
 hs_err_pid*
 
 # settings
-settings.java
+dflt.java
+dflt.class
+dflt$.class

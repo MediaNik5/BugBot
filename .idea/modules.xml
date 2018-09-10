@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BugBot.iml" filepath="$PROJECT_DIR$/BugBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BugBotRemastered.iml" filepath="$PROJECT_DIR$/BugBotRemastered.iml" />
     </modules>
   </component>
 </project>
