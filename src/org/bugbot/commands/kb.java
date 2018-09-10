@@ -12,15 +12,15 @@ public class kb implements CMD {
     @Override
     public void handle(BugBot b, Update e) {
         long chatid = e.getMessage().getChatId();
-        String tkn = b.cfg.getString(chatid+"");
-        if(tkn != null) {
-            String state = b.cfg.getString("kb."+chatid);
-            if(state == null || state.equals("true")) {
+        String tkn = b.cfg.getString(chatid + "");
+        if (tkn != null) {
+            String state = b.cfg.getString("kb." + chatid);
+            if (state == null || state.equals("true")) {
                 b.cfg.setString("kb." + chatid, "false");
-                b.sendMessage(chatid, b.getStringTyped(chatid+"", "kbfalse"));
-            } else{
+                b.sendMessage(chatid, b.getStringTyped(chatid + "", "kbfalse"));
+            } else {
                 b.cfg.setString("kb." + chatid, "true");
-                b.sendMessage(chatid, b.getStringTyped(chatid+"", "kbtrue"));
+                b.sendMessage(chatid, b.getStringTyped(chatid + "", "kbtrue"));
             }
         }
     }

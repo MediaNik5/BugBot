@@ -15,9 +15,7 @@ import java.util.regex.Pattern;
 public class Handler {
 
 
-
     public static HashMap<String, CMD> cmds = new HashMap<>();
-
 
 
     public static void handle(BugBot b, Update e) {
@@ -115,8 +113,8 @@ public class Handler {
         }
 
         List<String> l = getNamesFromText(e.getMessage().getText(), " #", b);
-        if(!l.isEmpty()){
-            for(int i = 0; i < 2 && i < l.size(); i++) {
+        if (!l.isEmpty()) {
+            for (int i = 0; i < 2 && i < l.size(); i++) {
                 Ann a;
                 try {
                     a = Ann.load(b, b.cfg.getString(chatid + ""), l.get(i));
@@ -129,21 +127,20 @@ public class Handler {
         }
     }
 
-    public static List<String> getNamesFromText(String text, String startName, BugBot b){
+    public static List<String> getNamesFromText(String text, String startName, BugBot b) {
 
         List<String> l = new ArrayList<>();
         String[] t = text.split(startName);
 
-        if(t.length == 1)
+        if (t.length == 1)
             return l;
 
-        for(int i = 1; i < t.length; i++) {
-            if(i == 1) {
-                if(!b.annConfig.contains(t[0].toLowerCase())) l.add(t[i].split(" ", 2)[0].toLowerCase());
+        for (int i = 1; i < t.length; i++) {
+            if (i == 1) {
+                if (!b.annConfig.contains(t[0].toLowerCase())) l.add(t[i].split(" ", 2)[0].toLowerCase());
 
-            }else
-                if(!b.annConfig.contains(t[i-1].split(" ", 2)[1].toLowerCase()))
-                    l.add(t[i].split(" ", 2)[0].toLowerCase());
+            } else if (!b.annConfig.contains(t[i - 1].split(" ", 2)[1].toLowerCase()))
+                l.add(t[i].split(" ", 2)[0].toLowerCase());
         }
 
         return l;
@@ -161,25 +158,27 @@ public class Handler {
         }
     }
 
-    private static String getCmd(String s){
+    private static String getCmd(String s) {
         try {
             return s.split("@")[0].toLowerCase();
-        }catch (Throwable e){return s.toLowerCase();}
+        } catch (Throwable e) {
+            return s.toLowerCase();
+        }
     }
 
     private static void sendAll(String[] s, String[] st, BugBot b, Update e) {
         StringBuilder sb = new StringBuilder();
         sb.append("/ann ");
-        sb.append(st[1].substring(1)+" ");
+        sb.append(st[1].substring(1) + " ");
         sb.append(s[1]);
-        for (int i = 2; i<s.length; i++)
-            sb.append("\n"+s[i]);
+        for (int i = 2; i < s.length; i++)
+            sb.append("\n" + s[i]);
         String[] some = sb.toString().split(" ");
         List<String> l = b.cfg.getStringList("tkn");
-        for (String q : l){
+        for (String q : l) {
             List<String> a = b.cfg.getStringList(q);
-            for(String w : a)
-                if(b.cfg.getString("follow."+w)==null)
+            for (String w : a)
+                if (b.cfg.getString("follow." + w) == null)
                     ann.exe(b, Long.parseLong(w), some, e);
         }
     }

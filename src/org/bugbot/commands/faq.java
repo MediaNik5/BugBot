@@ -11,11 +11,11 @@ public class faq implements CMD {
 
     @Override
     public void handle(BugBot b, Update e) {
-        if((long)e.getMessage().getChatId() == e.getMessage().getFrom().getId())
+        if ((long) e.getMessage().getChatId() == e.getMessage().getFrom().getId())
             b.sendMessage(e.getMessage().getChatId(), "Create your frimeware: command '/addrom [name]' in pm. Get your token.\n" +
                     "Go to your group and leave /install. Send to bot that token, That's it!");
         else
-            b.sendMessage(e.getMessage().getChatId(), b.getStringTyped(e.getMessage().getChatId()+"", "faq"));
+            b.sendMessage(e.getMessage().getChatId(), b.getStringTyped(e.getMessage().getChatId() + "", "faq"));
     }
 
     @Override

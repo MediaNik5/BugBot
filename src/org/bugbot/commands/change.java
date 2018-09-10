@@ -14,15 +14,15 @@ public class change implements CMD {
 
 
         long chatid = e.getMessage().getChatId();
-        String tkn = b.cfg.getString(chatid+"");
-        if(tkn != null) {
-            String state = b.cfg.getString("follow."+chatid);
-            if(state == null){
+        String tkn = b.cfg.getString(chatid + "");
+        if (tkn != null) {
+            String state = b.cfg.getString("follow." + chatid);
+            if (state == null) {
                 b.cfg.setString("follow." + chatid, "false");
-                b.sendMessage(chatid, b.getStringTyped(chatid+"", "followoff"));
-            } else{
+                b.sendMessage(chatid, b.getStringTyped(chatid + "", "followoff"));
+            } else {
                 b.cfg.setString("follow." + chatid, null);
-                b.sendMessage(chatid, b.getStringTyped(chatid+"", "followon"));
+                b.sendMessage(chatid, b.getStringTyped(chatid + "", "followon"));
             }
         }
     }

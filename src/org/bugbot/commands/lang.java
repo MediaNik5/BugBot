@@ -13,13 +13,13 @@ public class lang implements CMD {
     public void handle(BugBot b, Update e) {
 
         long chatid = e.getMessage().getChatId();
-        String tkn = b.cfg.getString(chatid+"");
-        if(tkn != null) {
-            String state = b.cfg.getString("language."+chatid);
-            if(state == null || state.equals("en")){
+        String tkn = b.cfg.getString(chatid + "");
+        if (tkn != null) {
+            String state = b.cfg.getString("language." + chatid);
+            if (state == null || state.equals("en")) {
                 b.cfg.setString("language." + chatid, "ru");
                 b.sendMessage(chatid, "Язык установлен на русский");
-            } else{
+            } else {
                 b.cfg.setString("language." + chatid, "en");
                 b.sendMessage(chatid, "Language is English now");
             }

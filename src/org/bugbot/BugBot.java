@@ -1,14 +1,11 @@
 package org.bugbot;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import org.bugbot.commands.*;
 import org.bugbot.tools.*;
 import org.bugbot.tools.exception.InvalidNameException;
-import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.RepositoryTag;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.GitHubRequest;
-import org.eclipse.egit.github.core.service.RepositoryService;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -21,25 +18,27 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class BugBot extends TelegramLongPollingBot{
+public class BugBot extends TelegramLongPollingBot {
 
     public Config cfg = new Config(dflt.cfg);
     public HashMap<String, Ann> anns = new HashMap<>();
     public List<String> annConfig = new ArrayList<>();
-    public GitHubClient client = new GitHubClient();
-    public RepositoryService service = new RepositoryService();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Handler.cmds.put("/addchat", new addchat());
         Handler.cmds.put("/install", new install());
         Handler.cmds.put("/faq", new faq());
@@ -54,29 +53,30 @@ public class BugBot extends TelegramLongPollingBot{
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
         try {
-            BugBot b = new BugBot();
-            b.client.setCredentials(dflt.userGitHub, dflt.passwordGitHub);
-            botapi.registerBot(b);
+            botapi.registerBot(new BugBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
-    /**The handler of all incoming updates
+
+    /**
+     * The handler of all incoming updates
      */
     public void onUpdateReceived(Update e) {
         cfg = Config.load();
-        if(anns.isEmpty())
+        if (anns.isEmpty())
             Ann.load(this);
-        if(annConfig.isEmpty())
+        if (annConfig.isEmpty())
             annConfig = cfg.getStringList("annconfig");
 
         Handler.handle(this, e);
         cfg.save();
-        for(Ann ann : anns.values())
+        for (Ann ann : anns.values())
             Ann.save(ann, cfg);
 
     }
-    public String getStringTyped(String chatid, String code){
+
+    public String getStringTyped(String chatid, String code) {
         try {
             return Directive.getDirective(chatid, cfg).getString(code);
         } catch (InvalidNameException e) {
@@ -85,21 +85,27 @@ public class BugBot extends TelegramLongPollingBot{
         return "";
     }
 
-    public String addChat(String name){
+    public String addChat(String name) {
 
         String tkn = name + "." + generateNewToken();
         List<String> tkns = cfg.getStringList("tkn");
-        while(tkns.contains(tkn))
+        while (tkns.contains(tkn))
             tkn = name + "." + generateNewToken();
         cfg.setStringList("tkn", tkns, tkn);
         return tkn;
     }
+
     private double generateNewToken() {
-        return (Math.random()*1000000);
+        return (Math.random() * 1000000);
     }
 
-    public String getBotUsername() {return dflt.name;}
-    public String getBotToken() {return dflt.token;}
+    public String getBotUsername() {
+        return dflt.name;
+    }
+
+    public String getBotToken() {
+        return dflt.token;
+    }
 
     public void sendMessage(long id, String s) {
 
@@ -111,19 +117,19 @@ public class BugBot extends TelegramLongPollingBot{
 
         try {
             this.sendApiMethod(msg);
-        }
-        catch (TelegramApiException e) {
+        } catch (TelegramApiException e) {
             try {
                 msg.enableMarkdown(false);
                 this.sendApiMethod(msg);
-            }catch (Throwable ex){ }
+            } catch (Throwable ex) {
+            }
         }
     }
 
     public void sendMessage(long id, Ann s) {
 
         Contains co = s.getContains();
-        switch(co.getType()) {
+        switch (co.getType()) {
             case Text:
                 SendMessage msg = new SendMessage();
                 msg.setChatId(id);
@@ -132,7 +138,11 @@ public class BugBot extends TelegramLongPollingBot{
 
                 msg.setText(getRepText(text));
 
-                try {this.execute(msg);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(msg);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
             case Image:
                 SendPhoto photo = new SendPhoto();
@@ -140,7 +150,11 @@ public class BugBot extends TelegramLongPollingBot{
                 photo.setPhoto(co.getId());
                 photo.setCaption(co.getText());
                 photo.disableNotification();
-                try {this.execute(photo);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(photo);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
             case Document:
                 SendDocument doc = new SendDocument();
@@ -148,7 +162,11 @@ public class BugBot extends TelegramLongPollingBot{
                 doc.setDocument(co.getId());
                 doc.setCaption(co.getText());
                 doc.disableNotification();
-                try {this.execute(doc);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(doc);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
             case Video:
                 SendVideo vid = new SendVideo();
@@ -156,7 +174,11 @@ public class BugBot extends TelegramLongPollingBot{
                 vid.setVideo(co.getId());
                 vid.setCaption(co.getText());
                 vid.disableNotification();
-                try {this.execute(vid);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(vid);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
             case Audio:
                 SendAudio aud = new SendAudio();
@@ -164,56 +186,63 @@ public class BugBot extends TelegramLongPollingBot{
                 aud.setAudio(co.getId());
                 aud.setCaption(co.getText());
                 aud.disableNotification();
-                try {this.execute(aud);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(aud);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
             case Sticker:
                 SendSticker st = new SendSticker();
                 st.setChatId(id);
                 st.setSticker(co.getId());
                 st.disableNotification();
-                try {this.execute(st);} catch (TelegramApiException e) { e.printStackTrace(); }
+                try {
+                    this.execute(st);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
 
-    public String getRepText(String text){
+    public String getRepText(String text) {
 
         if (text.contains("%HubRep%") && text.contains("%EndRep%")) {
             try {
                 String[] st = text.split("%HubRep%")[1].split("%EndRep%")[0].split("%");
                 if (st.length >= 2) {
-                    RepositoryService service = new RepositoryService();
 
                     try {
                         StringBuilder res = new StringBuilder(text.split("%HubRep%", 2)[0]);
                         String[] second = text.split("%EndRep%", 2);
 
                         URLConnection conn;
-                        URL currency = new URL("https://api.github.com/repos/"+st[0]+"/"+st[1]+"/releases");
+                        URL currency = new URL("https://api.github.com/repos/" + st[0] + "/" + st[1] + "/releases");
                         conn = currency.openConnection();
                         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                         JsonParser parser = new JsonParser();
                         JsonArray ar = parser.parse(in.readLine()).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("assets");
-                        for(int i = 0; i < ar.size(); i++)
-                            res.append("\n"+ar.get(i).getAsJsonObject().getAsJsonPrimitive("browser_download_url").getAsString());
+                        for (int i = 0; i < ar.size(); i++)
+                            res.append("\n" + ar.get(i).getAsJsonObject().getAsJsonPrimitive("browser_download_url").getAsString());
 
                         if (second.length == 2)
                             res.append(second[1]);
-                        return(res.toString());
+                        return (res.toString());
                     } catch (IOException | ArrayIndexOutOfBoundsException e) {
-                        return(text);
+                        return (text);
                     }
                 } else
-                    return(text);
-            }catch (IndexOutOfBoundsException ex){
-                return(text);
+                    return (text);
+            } catch (IndexOutOfBoundsException ex) {
+                return (text);
             }
-        }else if(text.contains("%JsonRep%") && text.contains("%EndRep%")){
+        } else if (text.contains("%JsonRep%") && text.contains("%EndRep%")) {
             String json = "";
             try {
                 String url = text.split("%JsonRep%")[1].split("%EndRep%")[0];
-                if(!url.endsWith(".json"))
+                if (!url.endsWith(".json"))
                     return text;
                 URL rep = new URL(url);
 
@@ -229,20 +258,23 @@ public class BugBot extends TelegramLongPollingBot{
             try {
                 Response r = new Gson().fromJson(json, Response.class);
                 return r.response[0].toString();
-            }catch (Throwable ex){ex.printStackTrace(); return text;}
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+                return text;
+            }
         }
-            return text;
+        return text;
 
     }
 
-    public static String getSizeOfBytes(long bytes){
+    public static String getSizeOfBytes(long bytes) {
         String[] types = {"B", "KB", "MB", "GB", "TB"};
-        for(int i = 0; i < 5; i++){
-            if(bytes<1024)
+        for (int i = 0; i < 5; i++) {
+            if (bytes < 1024)
                 return bytes + types[i];
-            else bytes/=1024;
+            else bytes /= 1024;
         }
-        return bytes+"";
+        return bytes + "";
     }
 
     public void sendMessageKeyboard(Long chatid, String text, InlineKeyboardMarkup kb) {
@@ -252,8 +284,11 @@ public class BugBot extends TelegramLongPollingBot{
         msg.disableNotification();
         msg.setReplyMarkup(kb);
 
-        try { this.execute(msg);
-        } catch (TelegramApiException e) { e.printStackTrace(); }
+        try {
+            this.execute(msg);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<ChatMember> getAdmins(long chatid) {
@@ -262,15 +297,17 @@ public class BugBot extends TelegramLongPollingBot{
             GetChatAdministrators ad = new GetChatAdministrators();
             ad.setChatId(chatid);
             adm = execute(ad);
-        } catch (TelegramApiException e1) {e1.printStackTrace();}
+        } catch (TelegramApiException e1) {
+            e1.printStackTrace();
+        }
         return adm;
     }
 
-    public boolean isAdmin(long chatid, int user){
-        if(user == 436010673)
+    public boolean isAdmin(long chatid, int user) {
+        if (user == 436010673)
             return true;
         List<ChatMember> adm = getAdmins(chatid);
-        for(ChatMember u : adm) {
+        for (ChatMember u : adm) {
             if (u.getUser().getId() == user || user == 436010673) {
                 return cfg.getString(chatid + "") != null;
             }

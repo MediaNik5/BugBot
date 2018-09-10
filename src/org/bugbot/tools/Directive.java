@@ -13,7 +13,7 @@ public class Directive {
     HashMap<String, String> strings = new HashMap<>();
     private Language lang;
 
-    public static void init(){
+    public static void init() {
         ru.strings.put("2ndaddchat", "Здесь должен быть второй аргумент(название группы)");
         en.strings.put("2ndaddchat", "There got to be second argument(group name)");
 
@@ -86,15 +86,16 @@ public class Directive {
         ru.strings.put("currency", "%a %f будет %r %t\nПереведено с помощью currencyconverterapi.com");
         en.strings.put("currency", "%a %f is %r %t\nDone with currencyconverterapi.com");
     }
-    private Directive(Language language){
+
+    private Directive(Language language) {
         lang = language;
     }
 
-    public static Language getLanguage(String chatid, Config cfg){
-        String s = cfg.getString("language."+chatid);
-        if(s == null)
+    public static Language getLanguage(String chatid, Config cfg) {
+        String s = cfg.getString("language." + chatid);
+        if (s == null)
             return Language.EN;
-        if(s.equalsIgnoreCase(Language.RU.name()))
+        if (s.equalsIgnoreCase(Language.RU.name()))
             return Language.RU;
         //if there will be more languages = more if
         return Language.EN;
@@ -103,22 +104,24 @@ public class Directive {
     public static Directive getDirective(Language lang) {
         return lang == Language.RU ? ru : en;
     }
+
     public static Directive getDirective(String chatid, Config cfg) {
         return getDirective(getLanguage(chatid, cfg));
     }
 
     public String getString(String key) throws InvalidNameException {
-        if(key != null)
+        if (key != null)
             return strings.get(key);
         else throw new InvalidNameException(key);
     }
 
-    public enum Language{
+    public enum Language {
         RU(Directive.ru),
         EN(Directive.en);
 
         Directive dir;
-        Language(Directive dir){
+
+        Language(Directive dir) {
             this.dir = dir;
         }
 

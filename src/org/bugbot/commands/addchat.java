@@ -16,9 +16,9 @@ public class addchat implements CMD {
         long chatid = e.getMessage().getChatId();
         if (c.length == 1) {
             b.sendMessage(chatid, b.getStringTyped(chatid + "", "2ndaddchat"));
-        }else if(c[1].length() >= 18) {
+        } else if (c[1].length() >= 18) {
             b.sendMessage(chatid, b.getStringTyped(chatid + "", "lengthaddchat"));
-        }else{
+        } else {
             String tkn = b.addChat(c[1]);
             b.cfg.setStringList("tkn", b.cfg.getStringList("tkn"), tkn);
             b.sendMessage(chatid, b.getStringTyped(chatid + "", "addchat") + "\n\n```" + tkn + "```");
@@ -27,6 +27,6 @@ public class addchat implements CMD {
 
     @Override
     public boolean hasRights(int user, long chat, BugBot b) {
-        return (long)user == chat;
+        return (long) user == chat;
     }
 }

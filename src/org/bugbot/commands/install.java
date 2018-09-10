@@ -12,11 +12,11 @@ public class install implements CMD {
     @Override
     public void handle(BugBot b, Update e) {
 
-        if(b.cfg.getString(e.getMessage().getChatId()+"")==null) {
+        if (b.cfg.getString(e.getMessage().getChatId() + "") == null) {
             b.cfg.setString(e.getMessage().getFrom().getId() + "", e.getMessage().getChatId() + "");
             b.sendMessage(e.getMessage().getFrom().getId(),
                     b.getStringTyped(e.getMessage().getChatId() + "", "install"));
-        }else
+        } else
             b.sendMessage(e.getMessage().getChatId(),
                     b.getStringTyped(e.getMessage().getChatId() + "", "alinstall"));
     }

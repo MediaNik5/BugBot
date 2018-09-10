@@ -15,7 +15,7 @@ public class no implements CMD {
         if (b.cfg.getString(chatid + "") == null)
             return;
         String[] t = e.getMessage().getText().split(" ", 2);
-        if (t.length == 1){
+        if (t.length == 1) {
             b.sendMessage(e.getMessage().getChatId(), b.getStringTyped(e.getMessage().getChatId() + "", "2ndno"));
             return;
         }
